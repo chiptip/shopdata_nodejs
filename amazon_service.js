@@ -3,25 +3,26 @@ var https = require('https');
 var fs = require('fs');
 var app = express();
 
+app.set('views', './views');
+app.engine('html', require('ejs').renderFile);
+
+
 var options = {
   key: fs.readFileSync('keys/server.pem'),
   cert: fs.readFileSync('keys/server.crt')
 };
 
 app.get('/', function(req, res){
-  fs.readFile('amazon_login.html',function (err, data){
-      res.writeHead(200, {'Content-Type': 'text/html','Content-Length':data.length});
-      res.write(data);
-      res.end();
-  });
+  res.render('amazon_login.html');
 });
 
 app.get('/profile', function(req, res){
-  fs.readFile('amazon_profile.html',function (err, data){
-      res.writeHead(200, {'Content-Type': 'text/html','Content-Length':data.length});
-      res.write(data);
-      res.end();
-  });
+  var scope = req.param("profile");
+  var exprIn = req.param("expires_in");
+  var token = req.param("access_token");
+
+  console.log('token: ' + token);
+  res.render('amazon_profile.html');
 });
 
 app.get('/helloworld', function(req, res){
